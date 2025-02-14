@@ -6,7 +6,7 @@
 #    By: jm <jm@student.42lyon.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 20:26:23 by TheTerror         #+#    #+#              #
-#    Updated: 2025/02/13 19:56:58 by jm               ###   ########lyon.fr    #
+#    Updated: 2025/02/14 10:58:55 by jm               ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,10 +21,11 @@ CYAN    = \033[36m
 WHITE   = \033[97m
 
 
-NAME			= avaj-launcher
+NAME			= avaj_launcher
 JC				= javac
 JRUN			= java
 JFLAGS			= 
+ARGS 			?=
 
 BIN_DIR			= .bin
 
@@ -36,17 +37,21 @@ CLASS			= $(addprefix $(BIN_DIR)/, $(SRC:.java=.class))
 
 RM				= rm -rf
 
+RUN_CMD			= $(JRUN) -cp $(BIN_DIR) $(MAIN_CLASS)
+
 # Rule to compile .java files to .class files
 $(BIN_DIR)/%.class : %.java
 	@echo "$(CYAN)Compiling $< to $@$(RESET)"
 	@$(JC) $(JFLAGS) $< -d $(BIN_DIR)
 
 ### Targets ###
-all : $(NAME)
+all : build
 
-$(NAME) : $(CLASS)
-	@echo "$(GREEN)Running the program $(MAIN_CLASS)$(RESET)"
-	@$(JRUN) -cp $(BIN_DIR) $(MAIN_CLASS)
+build : $(CLASS) log_run_cmd
+
+run : build
+	@echo "$(GREEN)Running the program $(MAIN_CLASS) with arguments '$(ARGS)'$(RESET)"
+	@$(RUN_CMD) $(ARGS)
 
 $(BIN_DIR):
 	@mkdir -p $(BIN_DIR)
@@ -64,4 +69,7 @@ re: log_re fclean all
 log_re:
 	@echo "$(BLUE)Rebuilding everything...$(RESET)"
 
-.PHONY: all clean fclean re log_re
+log_run_cmd:
+	@echo "$(WHITE)run command -->$(YELLOW) $(RUN_CMD)$(RESET)"
+
+.PHONY: all clean fclean re log_re build run log_run_cmd
