@@ -1,2 +1,0 @@
-avajlauncher/customs/exceptions/CustomException.java
-avajlauncher/main/Main.java
