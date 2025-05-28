@@ -1,0 +1,51 @@
+package avajlauncher.flyables;
+
+import avajlauncher.customs.exceptions.CustomException;
+import avajlauncher.main.Coordinates;
+import avajlauncher.main.SimulationLogger;
+
+public class Baloon extends Aircraft {
+
+	{
+		this.type = "baloon";
+	}
+
+	public Baloon(long p_id, String p_name, Coordinates p_coordinates)  throws CustomException{
+		super(p_id, p_name, p_coordinates);
+	}
+
+	/**
+	 * calls the super's method to update the weather at the current position
+	 * then moves the aircraft accordingly to the weather
+	 * then finally logs
+	 */
+	public void	updateConditions() throws CustomException {
+		super.updateConditions();
+		switch (this.presentWeather.toLowerCase()) {
+			case "sun":
+				this.coordinates.incrementLongitude(2);
+				this.coordinates.incrementHeight(4);
+				SimulationLogger.getInstance().logAircraftWeatherChangeMessage(this.type, this.name, this.id, "It feels like the sun is roasting everything in sight!");
+				break;
+			case "rain":
+				this.coordinates.decrementHeight(5);
+				SimulationLogger.getInstance().logAircraftWeatherChangeMessage(this.type, this.name, this.id, "The rain is pounding the roof like a drum!");
+				break;
+			case "fog":
+				this.coordinates.decrementHeight(3);
+				SimulationLogger.getInstance().logAircraftWeatherChangeMessage(this.type, this.name, this.id, "The fog is creeping in, swallowing everything in its path!");
+				break;
+			case "snow":
+				this.coordinates.decrementHeight(15);
+				SimulationLogger.getInstance().logAircraftWeatherChangeMessage(this.type, this.name, this.id, "It’s like the snow is gently whispering as it falls, blanketing everything!");
+				break;
+		
+			default:
+				break;
+		}
+		if (this.coordinates.getHeight() <= 0) {
+			this.weatherTower.unregister(this);
+		}
+	}
+
+}

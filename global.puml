@@ -17,8 +17,10 @@ class WeatherTower
 
 class WeatherProvider <<Singleton>>
 {
+-{static} WeatherProvider instance
 -string[] weather
 -WeatherProvider()
++{static} WeatherProvider getInstance()
 +string getCurrentWeather(Coordinates p_coordinates)
 }
 
@@ -37,38 +39,60 @@ class Aircraft
 {
 #long id
 #string name
-#Coordinate coordinates
-#Aircraft(long p_id, string p_name, Coordinates p_coordinate)
+#Coordinates coordinates
+#string type
+#Aircraft(long p_id, string p_name, Coordinates p_coordinates)
++public String	getType()
++public String	getName()
++public long	getId()
 }
 
 abstract Flyable
 {
 #WeatherTower weatherTower
 +abstract void updateConditions()
++abstract Flyable* newInstance(String p_type, long p_id, String p_name, Coordinates p_coordinates)
 +registerTower(WeatherTower* p_tower)
 }
 
 class Helicopter
 {
-+Helicopter(long p_id, string p_name, Coordinates p_coordinate)
++Helicopter(long p_id, string p_name, Coordinates p_coordinates)
 +void updateConditions()
++Flyable* newInstance(String p_type, long p_id, String p_name, Coordinates p_coordinates)
 }
 
 class JetPlane
 {
-+JetPlane(long p_id, string p_name, Coordinates p_coordinate)
++JetPlane(long p_id, string p_name, Coordinates p_coordinates)
 +void updateConditions()
++Flyable* newInstance(String p_type, long p_id, String p_name, Coordinates p_coordinates)
 }
 
 class Baloon
 {
-+Baloon(long p_id, string p_name, Coordinates p_coordinate)
++Baloon(long p_id, string p_name, Coordinates p_coordinates)
 +void updateConditions()
++Flyable* newInstance(String p_type, long p_id, String p_name, Coordinates p_coordinates)
 }
 
 class AircraftFactory <<Singleton>>
 {
+-List* IDs;
+-long newId()
++void registerId(long p_id)
++void unregisterId(long p_id)
++boolean idExists(long p_id)
 +Flyable* newAircraft(string p_type, string p_name, Coordinates p_coordinates)
+}
+
+class Logger <<Singleton>>
+{
+-{static} Logger* instance
+-File* simulationOutputFile
+-Logger()
++{static} Logger* getInstance()
++void logAircraftRegistration(String p_type, String p_name, long p_id)
 }
 
 Tower <|-- WeatherTower

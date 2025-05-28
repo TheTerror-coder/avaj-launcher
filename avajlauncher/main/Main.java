@@ -1,54 +1,61 @@
 package avajlauncher.main;
 
 import avajlauncher.customs.exceptions.CustomException;
-import avajlauncher.customs.exceptions.NullSimulationException;
+import avajlauncher.flyables.AircraftFactory;
+import avajlauncher.flyables.Flyable;
+import avajlauncher.variables.Constants;
 import avajlauncher.variables.Variables;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.InputMismatchException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 class Main {
 
-	static final int							AIRCRAFT_FORMAT_LENGTH = 5;
-	static int									NSimulation = 0;
-	static ArrayList<HashMap<String, String>>	Aircrafts = new ArrayList<>();
+	private static final int							sAIRCRAFT_FORMAT_LENGTH = 5;
+	private static int									sNSimulation = 0;
+	private static ArrayList<HashMap<String, String>>	sAircrafts = new ArrayList<>();
+	private static WeatherTower							sWeatherTower = new WeatherTower();
 
 	public static void main(String[] args) {
 		
 		try {
-			String	scenarioFilename;
-			Variables	vars = new Variables();
-
-			if (args.length < 1)
+			String		scenarioFilename = null;
+			Variables	vars = null;
+			
+			{
+				if (args.length < 1)
 				throw new CustomException("missing argument, expected a scenario text file");
-			if (args.length > 1)
+				if (args.length > 1)
 				throw new CustomException("too much arguments");
-			if (args[0].length() < 1)
+				if (args[0].length() < 1 || args[0].trim().length() < 1)
 				throw new CustomException("empty file name");
+	
+				vars = new Variables();
+				scenarioFilename = args[0];
+			}
 
-			scenarioFilename = args[0];
 			validateScenarioFile(scenarioFilename);
 			parseScenarioFile(vars, scenarioFilename);
 
-			for (HashMap<String, String> tmp : Aircrafts) {
+			/*
+			 * Print out the parsed and validated data
+			 */
+			for (HashMap<String, String> tmp : sAircrafts) {
 				for (Map.Entry<String, String> tmp2 : tmp.entrySet()) {
 					System.out.print(tmp2.getValue());
 					System.out.print(' ');
 				}
 				System.out.println();
 			}
-			
+
+			beginSimulation();
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -56,7 +63,7 @@ class Main {
 		}
 	}
 
-	public static boolean validateScenarioFile(String scenarioFilename) throws CustomException {
+	private static boolean validateScenarioFile(String scenarioFilename) throws CustomException {
 		try {
 			File	scenarioFile = new File(scenarioFilename);
 
@@ -74,7 +81,7 @@ class Main {
 		return (true);
 	}
 
-	public static boolean validateTxtExtension(File f) throws CustomException {
+	private static boolean validateTxtExtension(File f) throws CustomException {
 		String		filename;
 		String[]	filenameParts;
 		String		extension;
@@ -91,7 +98,7 @@ class Main {
 		return (true);
 	}
 
-	public static boolean	parseScenarioFile(Variables vars, String scenarioFilename) throws FileNotFoundException, CustomException {
+	private static boolean	parseScenarioFile(Variables vars, String scenarioFilename) throws FileNotFoundException, CustomException {
 		File	f = new File(scenarioFilename);
 		Scanner	sc = new Scanner(f);
 
@@ -114,10 +121,10 @@ class Main {
 			try (Scanner	strSc = new Scanner(line)) {
 				if (!strSc.hasNext())
 					throw new CustomException("Invalid scenario: expected weather change recurrence number -- line" +  vars.lineNumber);
-				NSimulation = strSc.nextInt();
+				sNSimulation = strSc.nextInt();
 				if (strSc.hasNext())
 					throw new CustomException("Invalid scenario: expected one token -- line" +  vars.lineNumber);
-				if (NSimulation < 0)
+				if (sNSimulation < 0)
 					throw new CustomException("Invalid scenario: expected positive integer -- line" +  vars.lineNumber);
 			}
 
@@ -202,7 +209,7 @@ class Main {
 								throw new CustomException("failed to parse aircraft heigth at line" + vars.lineNumber);
 							}
 							
-							tmpmap.put("heigth", token);
+							tmpmap.put("height", token);
 							break;
 						case 6:
 							throw new CustomException("Invalid scenario: too much tokens at line" + vars.lineNumber);
@@ -212,7 +219,9 @@ class Main {
 					i++;
 
 				}
-				Aircrafts.add(tmpmap);
+				if (i < 6)
+					throw new CustomException("Invalid scenario: missing token(s) at line" + vars.lineNumber + ", expected 5 tokens");
+				sAircrafts.add(tmpmap);
 			}
 
 		} catch (InputMismatchException e) {
@@ -226,5 +235,52 @@ class Main {
 		}
 
 		return (true);
+	}
+
+	private static void	beginSimulation() throws CustomException {
+		long	n = 0;
+
+		{
+			n = 0;
+		}
+		registerAircraftsToATower();
+		while (n < sNSimulation)
+		{
+			SimulationLogger.getInstance().putSeperator();
+			sWeatherTower.changeWeather();
+			n++;
+		}
+		
+	}
+	
+	/**
+	 * Register all aircrafts
+	 */
+	private static void	registerAircraftsToATower() throws CustomException {
+		for (HashMap<String, String> anAircraft : sAircrafts) {
+			Flyable		flyableObject = null;
+			String		type = null;
+			String		name = null;
+			Coordinates	coordinates = null;
+			
+			{
+				int			longitude = 0;
+				int			latitude = 0;
+				int			height = 0;
+				
+				type = anAircraft.get("type");
+				name = anAircraft.get("name");
+				longitude = Integer.parseInt(anAircraft.get("longitude"));
+				latitude = Integer.parseInt(anAircraft.get("latitude"));
+				height = Integer.parseInt(anAircraft.get("height"));
+				coordinates = new Coordinates(longitude, latitude, height);
+			}
+			
+			flyableObject = AircraftFactory.getInstance().newAircraft(type, name, coordinates);
+			if (flyableObject == null) {
+				throw new CustomException("unknown aircraft type: " + anAircraft.get("type"));
+			}
+			sWeatherTower.register(flyableObject);
+		}
 	}
 }
