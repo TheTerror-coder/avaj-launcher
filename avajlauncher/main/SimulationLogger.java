@@ -59,7 +59,7 @@ public class SimulationLogger {
 
 	public void	logAircraftRegistration(String p_type, String p_name, long p_id) throws CustomException {
 		try (FileWriter	w = new FileWriter(this.simulationFile, true)) {
-			w.write("Tower says: " + p_type + " " + p_name + "#(" + p_id + "): registered to weather tower.\n");
+			w.write("Tower says: " + p_type + "#" + p_name + "(" + p_id + "): registered to weather tower.\n");
 		} catch (IOException e) {
 			throw new CustomException(e.getMessage());
 		} catch (Exception e) {
@@ -69,7 +69,7 @@ public class SimulationLogger {
 
 	public void	logAircraftUnregistration(String p_type, String p_name, long p_id) throws CustomException {
 		try (FileWriter	w = new FileWriter(this.simulationFile, true)) {
-			w.write("Tower says: " + p_type + " " + p_name + "#(" + p_id + "): unregistered from weather tower.\n");
+			w.write("Tower says: " + p_type + "#" + p_name + "(" + p_id + "): unregistered from weather tower.\n");
 		} catch (IOException e) {
 			throw new CustomException(e.getMessage());
 		} catch (Exception e) {
@@ -79,7 +79,7 @@ public class SimulationLogger {
 
 	public void	logAircraftWeatherChangeMessage(String p_type, String p_name, long p_id, String p_msg) throws CustomException {
 		try (FileWriter	w = new FileWriter(this.simulationFile, true)) {
-			w.write(p_type + " " + p_name + "#(" + p_id + "): " + p_msg + "\n");
+			w.write(p_type + "#" + p_name + "(" + p_id + "): " + p_msg + "\n");
 		} catch (IOException e) {
 			throw new CustomException(e.getMessage());
 		} catch (Exception e) {

@@ -30,29 +30,30 @@ class Main {
 			
 			{
 				if (args.length < 1)
-				throw new CustomException("missing argument, expected a scenario text file");
+					throw new CustomException("missing argument, expected a scenario text file");
 				if (args.length > 1)
-				throw new CustomException("too much arguments");
+					throw new CustomException("too much arguments");
 				if (args[0].length() < 1 || args[0].trim().length() < 1)
-				throw new CustomException("empty file name");
+					throw new CustomException("empty file name");
 	
 				vars = new Variables();
-				scenarioFilename = args[0];
+				scenarioFilename = args[0].trim();
 			}
 
 			validateScenarioFile(scenarioFilename);
 			parseScenarioFile(vars, scenarioFilename);
 
 			/*
+			 ** Debug **
 			 * Print out the parsed and validated data
 			 */
-			for (HashMap<String, String> tmp : sAircrafts) {
-				for (Map.Entry<String, String> tmp2 : tmp.entrySet()) {
-					System.out.print(tmp2.getValue());
-					System.out.print(' ');
-				}
-				System.out.println();
-			}
+			// for (HashMap<String, String> tmp : sAircrafts) {
+			// 	for (Map.Entry<String, String> tmp2 : tmp.entrySet()) {
+			// 		System.out.print(tmp2.getValue());
+			// 		System.out.print(' ');
+			// 	}
+			// 	System.out.println();
+			// }
 
 			beginSimulation();
 

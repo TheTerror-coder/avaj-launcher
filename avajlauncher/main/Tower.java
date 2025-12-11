@@ -10,7 +10,7 @@ import avajlauncher.flyables.*;
 
 public class Tower {
 	
-	private LinkedList<Flyable>	observers;
+	private List<Flyable>	observers;
 	private Iterator<Flyable>	observers_iterator;
 	
 	{

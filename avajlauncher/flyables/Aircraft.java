@@ -9,11 +9,11 @@ public class Aircraft extends Flyable{
 	protected long			id;
 	protected String		name;
 	protected Coordinates	coordinates;
-	protected String		presentWeather;
+	protected String		currentWeather;
 
 	{
 		type = "aircraft";
-		presentWeather = "SUN";
+		currentWeather = "SUN";
 	}
 	
 	protected Aircraft(long p_id, String p_name, Coordinates p_coordinates) throws CustomException {
@@ -41,9 +41,10 @@ public class Aircraft extends Flyable{
 	/**
 	 * gets the current weather at this aircraft's position
 	 */
+	@Override
 	public void	updateConditions() throws CustomException {
 		if (this.weatherTower != null) {
-			this.presentWeather = this.weatherTower.getWeather(this.coordinates);
+			this.currentWeather = this.weatherTower.getWeather(this.coordinates);
 		}
 	}
 

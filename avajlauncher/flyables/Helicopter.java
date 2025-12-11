@@ -14,9 +14,10 @@ public class Helicopter extends Aircraft {
 		super(p_id, p_name, p_coordinates);
 	}
 
+	@Override
 	public void	updateConditions() throws CustomException {
 		super.updateConditions();
-		switch (this.presentWeather.toLowerCase()) {
+		switch (this.currentWeather.toLowerCase()) {
 			case "sun":
 				this.coordinates.incrementLongitude(10);
 				this.coordinates.incrementHeight(2);

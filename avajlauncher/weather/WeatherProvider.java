@@ -48,8 +48,8 @@ public class WeatherProvider {
 	  * @return
 	  */
 	public String	getCurrentWeather(Coordinates p_coordinates) {
-		int	longitude;
-		int	latitude;
+		double	longitudeInRadians;
+		double	latitudeInRadians;
 		int	height;
 		// double	cos_longitude;
 		double	sin_longitude;
@@ -57,13 +57,13 @@ public class WeatherProvider {
 		double	sin_latitude;
 
 		{
-			longitude = p_coordinates.getLongitude();
-			latitude = p_coordinates.getLatitude();
+			longitudeInRadians = Math.toRadians(p_coordinates.getLongitude());
+			latitudeInRadians = Math.toRadians(p_coordinates.getLatitude());
 			height = p_coordinates.getHeight();
 			// cos_longitude = Math.cos(longitude);
-			sin_longitude = Math.sin(latitude);
-			cos_latitude = Math.cos(longitude);
-			sin_latitude = Math.sin(latitude);
+			sin_longitude = Math.sin(longitudeInRadians);
+			cos_latitude = Math.cos(latitudeInRadians);
+			sin_latitude = Math.sin(latitudeInRadians);
 		}
 
 		if (height > 50)

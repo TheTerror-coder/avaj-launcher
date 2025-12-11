@@ -19,9 +19,10 @@ public class Baloon extends Aircraft {
 	 * then moves the aircraft accordingly to the weather
 	 * then finally logs
 	 */
+	@Override
 	public void	updateConditions() throws CustomException {
 		super.updateConditions();
-		switch (this.presentWeather.toLowerCase()) {
+		switch (this.currentWeather.toLowerCase()) {
 			case "sun":
 				this.coordinates.incrementLongitude(2);
 				this.coordinates.incrementHeight(4);
