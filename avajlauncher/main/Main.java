@@ -3,7 +3,6 @@ package avajlauncher.main;
 import avajlauncher.customs.exceptions.CustomException;
 import avajlauncher.flyables.AircraftFactory;
 import avajlauncher.flyables.Flyable;
-import avajlauncher.variables.Constants;
 import avajlauncher.variables.Variables;
 
 import java.io.File;
@@ -11,13 +10,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 class Main {
 
-	private static final int							sAIRCRAFT_FORMAT_LENGTH = 5;
 	private static int									sNSimulation = 0;
 	private static ArrayList<HashMap<String, String>>	sAircrafts = new ArrayList<>();
 	private static WeatherTower							sWeatherTower = new WeatherTower();

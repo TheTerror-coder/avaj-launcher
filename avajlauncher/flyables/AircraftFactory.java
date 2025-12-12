@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import avajlauncher.customs.exceptions.CustomException;
 import avajlauncher.main.Coordinates;
-import avajlauncher.variables.Constants;
 
 public class AircraftFactory {
 	
